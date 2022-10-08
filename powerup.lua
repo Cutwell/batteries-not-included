@@ -12,8 +12,8 @@ function Powerup:new(x,y,z)
     self.position = setmetatable({x,y,z}, vectorMeta)
     self.normal = setmetatable({0,1,0}, vectorMeta)
     self.collisionBox = {0.5, 0.8, 0.5}
-    self.pickupCue = love.audio.newSource("assets/powerup_pickup.wav", "static") -- audio cue for battery collection
-    self.spawnCue = love.audio.newSource("assets/powerup_spawn.wav", "static") -- audio cue for battery collection
+    self.pickupCue = love.audio.newSource("assets/sounds/powerup_pickup.wav", "static") -- audio cue for battery collection
+    self.spawnCue = love.audio.newSource("assets/sounds/powerup_spawn.wav", "static") -- audio cue for battery collection
     self.renderFlag = false
     self.collisionModels = {}
 

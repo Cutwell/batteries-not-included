@@ -17,9 +17,9 @@ function Battery:new(x,y,z)
     self.timer = self.maxTimer
     self.timerIncrement = 5 -- time added per battery
     self.gameoverFlag = false
-    self.pickupCue = love.audio.newSource("assets/pickup.wav", "static") -- audio cue for battery collection
-    self.gameoverCue = love.audio.newSource("assets/Ambient_5.wav", "static") -- audio cue for game over
-    self.warningCue = love.audio.newSource("assets/beep.wav", "static") -- audio cue for low battery
+    self.pickupCue = love.audio.newSource("assets/sounds/pickup.wav", "static") -- audio cue for battery collection
+    self.gameoverCue = love.audio.newSource("assets/sounds/Ambient_5.wav", "static") -- audio cue for game over
+    self.warningCue = love.audio.newSource("assets/sounds/beep.wav", "static") -- audio cue for low battery
     self.warningCooldown = 0
     self.renderFlag = false
     self.collisionModels = {}

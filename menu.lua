@@ -11,7 +11,7 @@ function Menu:new(x, y, z, func, option1, texture1, option2, texture2)
     self.position = setmetatable({x,y,z}, vectorMeta)
     self.normal = setmetatable({0,1,0}, vectorMeta)
     self.collisionBox = {0.5, 0.8, 0.5}
-    self.optionCue = love.audio.newSource("assets/powerup_pickup.wav", "static") -- audio cue for option selection
+    self.optionCue = love.audio.newSource("assets/sounds/powerup_pickup.wav", "static") -- audio cue for option selection
     self.renderTimer = 0
     self.renderTimerMax = 2 -- wait 5 seconds before rendering after using option
 
