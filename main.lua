@@ -13,11 +13,13 @@ local Powerup = require "powerup"
 local Music = require "music"
 local Menu = require "menu"
 
-local map, background, player, battery, arcadeCabinet, powerup, music, settings
+local map, background, player, battery, arcadeCabinet, powerup, music, settings, title
 local canvas
 local accumulator = 0
 local frametime = 1/60
 local rollingAverage = {}
+local gamestate = 1
+local orbitAngle = 0
 
 local debugFont = love.graphics.newFont(14)
 
@@ -58,10 +60,10 @@ local banner = love.graphics.newImage("assets/banner.png")
 local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
 
 function love.load()
-    lg.setBackgroundColor(0.25,0.5,1)
+    --lg.setBackgroundColor(0.25,0.5,1)
 
     -- map
-    map = g3d.newModel("assets/factory6.obj", "assets/factory6.png", nil, nil, {-1,-1,1})
+    map = g3d.newModel("assets/factory.obj", "assets/factory.png", nil, nil, {-1,-1,1})
     map:setTranslation(0,0,0)
 
     -- background
@@ -70,7 +72,6 @@ function love.load()
     -- forcefield
     forcefield = g3d.newModel("assets/forcefield.obj", "assets/forcefield.png", {0,0,0}, {0,0,0}, {-1, -1, 1})
     forcefield:setTranslation(0,-100,0)
-
 
     -- player
     player = Player:new(2,-1,-0.4)
@@ -108,6 +109,16 @@ function love.load()
     settings = g3d.newModel("assets/menu/settings.obj", "assets/menu/settings.png", {0,0,0}, {0,0,0}, {0.5, 0.5, 0.5})
     settings:setTranslation(-2, -2, -13)
 
+    -- title when game loads
+    title = g3d.newModel("assets/title.obj", "assets/title.png", {0,0,0}, {0,0,0}, {0.6, 0.6, 1})
+    title:setTranslation(2,-3,1.5)
+    
+    player.position[1], player.position[2], player.position[3] = 2,-3,-0.4
+    for i=1, 3 do
+        g3d.camera.position[i] = player.position[i]
+    end
+    g3d.camera.lookInDirection()
+
     --canvas = {lg.newCanvas(1024,576), depth=true}
     canvas = {lg.newCanvas(1024,576), depth=true}
 end
@@ -131,7 +142,7 @@ function love.update(dt)
     while accumulator > frametime do
         accumulator = accumulator - frametime
         
-        player:update(dt)
+        player:update(dt, gamestate)
     end
 
     -- update battery
@@ -172,6 +183,8 @@ function love.update(dt)
 end
 
 function love.keypressed(k)
+    if gamestate == 1 then gamestate = 2 end
+
     if k == "escape" then love.event.push("quit") end
     if k == "f1" then
         --love.window.setFullscreen(not love.window.getFullscreen())
@@ -198,7 +211,9 @@ function love.resize(w,h)
 end
 
 function love.mousemoved(x,y, dx,dy)
-    g3d.camera.firstPersonLook(dx,dy)
+    if gamestate == 2 then
+        g3d.camera.firstPersonLook(dx,dy)
+    end
 end
 
 local function setColor(r,g,b,a)
@@ -220,6 +235,11 @@ function love.draw()
     map.shader:send("modelMatrix", map.matrix)
     love.graphics.draw(map.mesh)
     love.graphics.setShader()
+
+    -- draw title if game has not started
+    if gamestate == 1 then
+        title:draw()
+    end
 
     -- draw battery
     battery:draw()
@@ -262,6 +282,14 @@ function love.draw()
     lg.draw(canvas[1], screenWidth/2, screenHeight/2, 0, 1,-1, screenWidth/2, screenHeight/2)
 
     -- PRINT AFTER THIS POINT FOR CORRECT ORIENTATION
+
+    -- if gamestate is 1, draw "press any key to start"
+    if gamestate == 1 then
+        lg.setColor(1,1,1)
+        local str = "PRESS ANY KEY TO START.."
+        lg.print(str, (screenWidth/2)-(lg.getFont():getWidth(str)/2), (screenHeight/2)-(lg.getFont():getHeight()/2), 0, 1.5, 1.5)
+    end
+    
     -- debug info
     --lg.print("FPS: "..love.timer.getFPS().." difficulty: "..(math.ceil(battery.difficultyMultiplier*1000)/1000).." timer: "..(math.ceil(battery.timer*1000)/1000).." game time: "..(math.ceil(battery.gameTimer*1000)/1000), 10, 10)
     --lg.print("X"..player.position[1].." Y"..player.position[2].." Z"..player.position[3], 10, 10)
@@ -368,8 +396,8 @@ end
 function drawScoreboard(x,y,z)
     local score = battery.batteryCount
 
-    -- constrain to max 99 score (2 digits)
-    if score > 99 then score = 99 end
+    -- constrain to max 99 score (3 digits)
+    if score > 999 then score = 999 end
 
     -- convert to string
     local scoreString = ""
@@ -379,19 +407,22 @@ function drawScoreboard(x,y,z)
     end
 
     -- pad left with zeros to 2 digits
-    while #scoreString < 2 do
+    while #scoreString < 3 do
         scoreString = "0"..scoreString
     end
 
     local digit1 = tonumber(string.sub(scoreString, 1, 1))+1
     local digit2 = tonumber(string.sub(scoreString, 2, 2))+1
+    local digit3 = tonumber(string.sub(scoreString, 3, 3))+1
 
     local model1 = g3d.newModel("assets/board.obj", score_textures[digit1])
     local model2 = g3d.newModel("assets/board.obj", score_textures[digit2])
+    local model3 = g3d.newModel("assets/board.obj", score_textures[digit3])
     local message = g3d.newModel("assets/board.obj", "assets/scoreboard_message.png")
 
     lg.setColor( 1, 1, 1 )
-    primitives.rectangle(x-0.15, y-1.99, z+0.05, 0, 0, 0, 0.3, 0.48, 0.6, model1)
-    primitives.rectangle(x+0.15, y-1.99, z+0.05, 0, 0, 0, 0.3, 0.48, 0.6, model2)
+    primitives.rectangle(x-0.2, y-1.99, z+0.05, 0, 0, 0, 0.2, 0.48, 0.6, model1)
+    primitives.rectangle(x, y-1.99, z+0.05, 0, 0, 0, 0.2, 0.48, 0.6, model2)
+    primitives.rectangle(x+0.2, y-1.99, z+0.05, 0, 0, 0, 0.2, 0.48, 0.6, model3)
     primitives.rectangle(x, y-1.7, z+0.05, 0, 0, 0, 0.6, 0.12, 0.6, message)
 end

@@ -137,7 +137,9 @@ function Player:moveAndSlide(mx,my,mz)
     return mx, my, mz, nx, ny, nz
 end
 
-function Player:update(dt)
+function Player:update(dt, gamestate)
+    if gamestate == 1 then return end
+
     -- collect inputs
     local moveX,moveY = 0,0
     local speed = 0.018

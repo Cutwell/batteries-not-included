@@ -7,12 +7,14 @@ function Music:new()
     local self = setmetatable({}, Music)
     
     -- load music
-    self.intro = love.audio.newSource("assets/shooterSynthwave/intro.wav", "stream")
-    self.track1 = love.audio.newSource("assets/shooterSynthwave/track1.wav", "stream")
-    self.track2 = love.audio.newSource("assets/shooterSynthwave/track2.wav", "stream")
+    self.intro = love.audio.newSource("assets/shooterSynthwave/intro.wav", "static")
+    self.track1 = love.audio.newSource("assets/shooterSynthwave/track1.wav", "static")
+    self.track2 = love.audio.newSource("assets/shooterSynthwave/track2.wav", "static")
 
     self.current = self.intro
     self.current:play()
+    self.current:setLooping(true)
+    self.current:setVolume(1)
 
     self.paused = false
 
@@ -28,12 +30,15 @@ function Music:reset()
     self.current:play()
     -- set loop
     self.current:setLooping(true)
+    -- set volume
+    self.current:setVolume(1)
 end
 
 function Music:pause()
     if self.paused then
         self.current:play()
         self.paused = false
+        self.current:setLooping(true)
     else
         self.current:pause()
         self.paused = true
@@ -41,27 +46,19 @@ function Music:pause()
 end
 
 function Music:update(dt, battery)
-    if self.paused then
-        return
-    end
-
-    -- if player has started the game, start either track 1 or 2
-    if battery.batteryCount > 0 then
+    if not self.paused and battery.batteryCount > 0 then
         if self.current == self.intro then
             self:shuffle()
-            return
         end
 
         -- if track has finished, reset to another random track
         if not self.current:isPlaying() then
             self:shuffle()
-            return
         end
 
         -- if timer has run out, fade out current track
         if battery.timer <= 0 and self.current:isPlaying() then
             self.current:setVolume(self.current:getVolume() - dt * 0.5)
-            return
         end
     end
 end
@@ -80,6 +77,8 @@ function Music:shuffle()
 
     -- play track
     self.current:play()
+    self.current:setLooping(true)
+    self.current:setVolume(1)
 end
 
 return Music
