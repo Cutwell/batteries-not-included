@@ -3,10 +3,10 @@
 * You're a robot in a warehouse - collect batteries, stay alive!
 * A game exploring the basics of 3D movement, using retro graphics generated in DALLE2!
 
-Batteries Not Included is a short retro-style arcade game developed with LÖVE. Race around a warehouse floor, collecting battery charge to stay alive! Use  maneuverability and helpful power-ups to help locate each new battery, and reach a new high score!
+Batteries Not Included is a short retro-style arcade game developed with LÖVE. Race around a warehouse floor, collecting battery charge to stay alive! Maneuver and use helpful power-ups to help locate each new battery, and reach a new high score!
 
 ### How to play
-`Batteries not included` is developed in Love2D using [G3D](https://github.com/groverburger/g3d). Play it on Itch.
+`Batteries not included` is developed in Love2D using [G3D](https://github.com/groverburger/g3d). Play it on [Itch](https://cutwell.itch.io/batteries-not-included).
 
 |||
 |:---:|:---:|
