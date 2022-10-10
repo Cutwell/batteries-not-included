@@ -202,6 +202,7 @@ function love.keypressed(k)
         battery:reset()
         powerup:reset()
         player:reset()
+        music:reset()
     end
 end
 
@@ -301,6 +302,8 @@ function love.draw()
 
     -- draw tutorial in top corner (mirror arcade screen)
     --drawBanner()
+
+    lg.print(music.current:getVolume())
 
     --lg.print(collectgarbage("count"))
 end

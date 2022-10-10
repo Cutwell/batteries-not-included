@@ -30,7 +30,10 @@ function Music:reset()
     self.current:play()
     -- set loop
     self.current:setLooping(true)
-    -- set volume
+    -- reset volume for all tracks
+    self.intro:setVolume(1)
+    self.track1:setVolume(1)
+    self.track2:setVolume(1)
     self.current:setVolume(1)
 end
 
