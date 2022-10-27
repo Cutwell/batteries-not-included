@@ -1,16 +1,7 @@
-name: Love Build
-
-on:
-  workflow_dispatch: # run workflow manually
-
-jobs:
-  love-build:
-    steps:
-    - uses: actions/checkout@v2
-    - uses: nhartland/love-build@master
-      with:
-        app_name: 'Batteries Not Included'
-        love_version: '11.4'
-        # `main.lua` is in a subdirectory of your repository (`src`).
-        source_dir: 'src'
-        result_dir: 'build'
+- name: LÖVE Build
+  uses: nhartland/love-build@v1-beta4
+  with:
+    app_name: 'Batteries not Included'
+    love_version: '11.4'
+    source_dir: 'src'
+    result_dir: 'build'
