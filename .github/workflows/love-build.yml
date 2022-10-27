@@ -13,5 +13,5 @@ jobs:
         with:
           app_name: 'Batteries not Included'
           love_version: '11.4'
-          source_dir: 'src'
+          source_dir: '/src'
           result_dir: 'build'
